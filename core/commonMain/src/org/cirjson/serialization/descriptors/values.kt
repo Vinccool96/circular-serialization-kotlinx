@@ -78,3 +78,14 @@ public val CircularSerialDescriptor.capturedKClass: KClass<*>?
         is CircularSerialDescriptorForNullable -> original.capturedKClass
         else -> null
     }
+
+/**
+ * Returns new serial descriptor for the same type with [isNullable][CircularSerialDescriptor.isNullable]
+ * property set to `true`.
+ */
+@OptIn(ExperimentalCircularSerializationApi::class)
+public val CircularSerialDescriptor.nullable: CircularSerialDescriptor
+    get() {
+        if (this.isNullable) return this
+        return CircularSerialDescriptorForNullable(this)
+    }

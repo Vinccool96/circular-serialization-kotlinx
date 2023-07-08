@@ -2,6 +2,10 @@ package org.cirjson.serialization.builtins
 
 import org.cirjson.serialization.CircularKSerializer
 import org.cirjson.serialization.descriptors.CircularSerialDescriptor
+import org.cirjson.serialization.descriptors.PrimitiveKind
+import org.cirjson.serialization.descriptors.PrimitiveSerialDescriptor
+import org.cirjson.serialization.encoding.CircularDecoder
+import org.cirjson.serialization.encoding.CircularEncoder
 
 /**
  * Serializer that encodes and decodes [Long] as its string representation.
@@ -13,13 +17,13 @@ import org.cirjson.serialization.descriptors.CircularSerialDescriptor
 public object LongAsStringSerializer : CircularKSerializer<Long> {
 
     override val descriptor: CircularSerialDescriptor =
-            PrimitiveSerialDescriptor("kotlinx.serialization.LongAsStringSerializer", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor("org.cirjson.serialization.LongAsStringSerializer", PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, value: Long) {
+    override fun serialize(encoder: CircularEncoder, value: Long) {
         encoder.encodeString(value.toString())
     }
 
-    override fun deserialize(decoder: Decoder): Long {
+    override fun deserialize(decoder: CircularDecoder): Long {
         return decoder.decodeString().toLong()
     }
 
