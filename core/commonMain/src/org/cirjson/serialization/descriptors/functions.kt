@@ -5,6 +5,7 @@ import org.cirjson.serialization.InternalCircularSerializationApi
 import org.cirjson.serialization.internal.CircularArrayListClassDesc
 import org.cirjson.serialization.internal.CircularHashMapClassDesc
 import org.cirjson.serialization.internal.CircularHashSetClassDesc
+import org.cirjson.serialization.internal.PrimitiveDescriptorSafe
 import org.cirjson.serialization.modules.CircularSerialModuleImpl
 import org.cirjson.serialization.modules.CircularSerializersModule
 import org.cirjson.serialization.modules.CircularSerializersModuleBuilder
@@ -88,7 +89,7 @@ internal fun CircularSerialDescriptor.withContext(context: KClass<*>): CircularS
  */
 @Suppress("FunctionName")
 @OptIn(ExperimentalCircularSerializationApi::class)
-public fun buildClassSerialDescriptor(serialName: String, vararg typeParameters: CircularSerialDescriptor,
+public fun buildCircularClassSerialDescriptor(serialName: String, vararg typeParameters: CircularSerialDescriptor,
         builderAction: CircularClassSerialDescriptorBuilder.() -> Unit = {}): CircularSerialDescriptor {
     require(serialName.isNotBlank()) { "Blank serial names are prohibited" }
     val sdBuilder = CircularClassSerialDescriptorBuilder(serialName)
@@ -154,7 +155,7 @@ public fun SerialDescriptor(serialName: String, original: CircularSerialDescript
 }
 
 /**
- * An unsafe alternative to [buildClassSerialDescriptor] that supports an arbitrary [SerialKind].
+ * An unsafe alternative to [buildCircularClassSerialDescriptor] that supports an arbitrary [SerialKind].
  * This function is left public only for migration of pre-release users and is not intended to be used
  * as generally-safe and stable mechanism. Beware that it can produce inconsistent or non spec-compliant instances.
  *

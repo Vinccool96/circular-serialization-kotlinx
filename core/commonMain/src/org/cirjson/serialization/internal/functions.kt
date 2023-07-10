@@ -92,20 +92,6 @@ internal fun CircularSerialDescriptor.hashCodeImpl(typeParams: Array<CircularSer
     return result
 }
 
-@Suppress("Unused")
-@PublishedApi
-internal class InlineClassDescriptor(name: String, generatedSerializer: GeneratedCircularSerializer<*>) :
-    PluginGeneratedSerialDescriptor(name, generatedSerializer, 1) {
-
-    override val isInline: Boolean = true
-
-    override fun hashCode(): Int = super.hashCode() * 31
-
-    override fun equals(other: Any?): Boolean = equalsImpl(other) { otherDescriptor ->
-        otherDescriptor.isInline && typeParameterDescriptors.contentEquals(otherDescriptor.typeParameterDescriptors)
-    }
-}
-
 @InternalCircularSerializationApi
 public fun <T> InlineCircularPrimitiveDescriptor(name: String,
         primitiveSerializer: CircularKSerializer<T>): CircularSerialDescriptor =
@@ -143,17 +129,17 @@ internal fun CircularSerialDescriptor.cachedSerialNames(): Set<String> {
 internal fun List<CircularSerialDescriptor>?.compactArray(): Array<CircularSerialDescriptor> =
         takeUnless { it.isNullOrEmpty() }?.toTypedArray() ?: EMPTY_DESCRIPTOR_ARRAY
 
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 @PublishedApi
+@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 internal inline fun <T> CircularKSerializer<*>.cast(): CircularKSerializer<T> = this as CircularKSerializer<T>
 
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 @PublishedApi
+@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 internal inline fun <T> CircularSerializationStrategy<*>.cast(): CircularSerializationStrategy<T> =
         this as CircularSerializationStrategy<T>
 
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 @PublishedApi
+@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 internal inline fun <T> CircularDeserializationStrategy<*>.cast(): CircularDeserializationStrategy<T> =
         this as CircularDeserializationStrategy<T>
 
@@ -173,7 +159,7 @@ internal expect fun KClass<*>.platformSpecificSerializerNotRegistered(): Nothing
 internal fun KType.kclass() = when (val t = classifier) {
     is KClass<*> -> t
     is KTypeParameter -> {
-        error("Captured type parameter $t from generic non-reified function. " + "Such functionality cannot be supported as $t is erased, either specify serializer explicitly or make " + "calling function inline with reified $t")
+        error("Captured type parameter $t from generic non-reified function. Such functionality cannot be supported as $t is erased, either specify serializer explicitly or make calling function inline with reified $t")
     }
 
     else -> error("Only KClass supported as classifier, got $t")
@@ -221,3 +207,60 @@ internal expect fun <T : Any, E : T?> ArrayList<E>.toNativeArrayImpl(eClass: KCl
 internal inline fun <T, K> Iterable<T>.elementsHashCodeBy(selector: (T) -> K): Int {
     return fold(1) { hash, element -> 31 * hash + selector(element).hashCode() }
 }
+
+@InternalCircularSerializationApi
+@OptIn(ExperimentalCircularSerializationApi::class)
+public fun throwMissingFieldException(seen: Int, goldenMask: Int, descriptor: CircularSerialDescriptor) {
+    val missingFields = mutableListOf<String>()
+
+    var missingFieldsBits = goldenMask and seen.inv()
+    for (i in 0..<32) {
+        if (missingFieldsBits and 1 != 0) {
+            missingFields += descriptor.getElementName(i)
+        }
+        missingFieldsBits = missingFieldsBits ushr 1
+    }
+    throw MissingFieldException(missingFields, descriptor.serialName)
+}
+
+@InternalCircularSerializationApi
+@OptIn(ExperimentalCircularSerializationApi::class)
+public fun throwArrayMissingFieldException(seenArray: IntArray, goldenMaskArray: IntArray,
+        descriptor: CircularSerialDescriptor) {
+    val missingFields = mutableListOf<String>()
+
+    for (maskSlot in goldenMaskArray.indices) {
+        var missingFieldsBits = goldenMaskArray[maskSlot] and seenArray[maskSlot].inv()
+        if (missingFieldsBits != 0) {
+            for (i in 0..<32) {
+                if (missingFieldsBits and 1 != 0) {
+                    missingFields += descriptor.getElementName(maskSlot * 32 + i)
+                }
+                missingFieldsBits = missingFieldsBits ushr 1
+            }
+        }
+    }
+    throw MissingFieldException(missingFields, descriptor.serialName)
+}
+
+internal fun PrimitiveDescriptorSafe(serialName: String, kind: PrimitiveKind): CircularSerialDescriptor {
+    checkName(serialName)
+    return PrimitiveSerialDescriptor(serialName, kind)
+}
+
+private fun checkName(serialName: String) {
+    val keys = BUILTIN_SERIALIZERS.keys
+    for (primitive in keys) {
+        val simpleName = primitive.simpleName!!.capitalize()
+        val qualifiedName = "kotlin.$simpleName" // KClass.qualifiedName is not supported in JS
+        if (serialName.equals(qualifiedName, ignoreCase = true) || serialName.equals(simpleName, ignoreCase = true)) {
+            throw IllegalArgumentException("""
+                The name of serial descriptor should uniquely identify associated serializer.
+                For serial name $serialName there already exist ${simpleName.capitalize()}Serializer.
+                Please refer to SerialDescriptor documentation for additional information.
+            """.trimIndent())
+        }
+    }
+}
+
+private fun String.capitalize() = replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }

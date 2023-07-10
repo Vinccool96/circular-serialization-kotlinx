@@ -13,12 +13,12 @@ import org.cirjson.serialization.encoding.*
  */
 @PublishedApi
 @InternalCircularSerializationApi
-internal abstract class PrimitiveCircularArraySerializer<Element, Array, Builder : PrimitiveCircularArrayBuilder<Array>> internal constructor(
+internal abstract class CircularPrimitiveArraySerializer<Element, Array, Builder : CircularPrimitiveArrayBuilder<Array>> internal constructor(
         primitiveSerializer: CircularKSerializer<Element>) :
     CircularCollectionLikeSerializer<Element, Array, Builder>(primitiveSerializer) {
 
     final override val descriptor: CircularSerialDescriptor =
-            PrimitiveCircularArrayDescriptor(primitiveSerializer.descriptor)
+            CircularPrimitiveArrayDescriptor(primitiveSerializer.descriptor)
 
     final override fun Builder.builderSize(): Int = position
 

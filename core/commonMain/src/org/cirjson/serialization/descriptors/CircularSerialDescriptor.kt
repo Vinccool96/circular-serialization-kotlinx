@@ -96,7 +96,7 @@ import org.cirjson.serialization.encoding.*
  * [hashCode] implementation should use the same properties for computing the result.
  *
  * ### User-defined serial descriptors
- * The best way to define a custom descriptor is to use [buildClassSerialDescriptor] builder function, where
+ * The best way to define a custom descriptor is to use [buildCircularClassSerialDescriptor] builder function, where
  * for each serializable property the corresponding element is declared.
  *
  * Example:
@@ -136,7 +136,7 @@ import org.cirjson.serialization.encoding.*
  *
  * `SerialDescriptor` interface is not stable for inheritance in 3rd party libraries, as new methods
  * might be added to this interface or contracts of the existing methods can be changed.
- * This interface is safe to build using [buildClassSerialDescriptor] and [PrimitiveSerialDescriptor],
+ * This interface is safe to build using [buildCircularClassSerialDescriptor] and [PrimitiveSerialDescriptor],
  * and is safe to delegate implementation to existing instances.
  */
 public interface CircularSerialDescriptor {

@@ -2,6 +2,7 @@ package org.cirjson.serialization.internal
 
 import org.cirjson.serialization.CircularKSerializer
 import org.cirjson.serialization.ExperimentalCircularSerializationApi
+import org.cirjson.serialization.InternalCircularSerializationApi
 import org.cirjson.serialization.descriptors.CircularSerialDescriptor
 import org.cirjson.serialization.descriptors.SerialKind
 import org.cirjson.serialization.descriptors.StructureKind
@@ -11,7 +12,7 @@ import org.cirjson.serialization.encoding.CircularCompositeDecoder
  * Implementation that plugin uses to implement descriptors for auto-generated serializers.
  */
 @PublishedApi
-@OptIn(ExperimentalCircularSerializationApi::class)
+@OptIn(ExperimentalCircularSerializationApi::class, InternalCircularSerializationApi::class)
 internal open class PluginGeneratedSerialDescriptor(override val serialName: String,
         private val generatedSerializer: GeneratedCircularSerializer<*>? = null,
         final override val elementsCount: Int) : CircularSerialDescriptor, CircularCachedNames {

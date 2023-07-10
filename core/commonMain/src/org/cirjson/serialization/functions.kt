@@ -1,7 +1,10 @@
 package org.cirjson.serialization
 
-import org.cirjson.serialization.internal.AbstractPolymorphicCircularSerializer
-import org.cirjson.serialization.internal.throwSubtypeNotRegistered
+import org.cirjson.serialization.builtins.CircularArraySerializer
+import org.cirjson.serialization.builtins.nullable
+import org.cirjson.serialization.encoding.CircularCompositeDecoder
+import org.cirjson.serialization.encoding.CircularEncoder
+import org.cirjson.serialization.internal.*
 import org.cirjson.serialization.modules.CircularSerializersModule
 import org.cirjson.serialization.modules.EmptyCircularSerializersModule
 import kotlin.reflect.*
@@ -98,12 +101,12 @@ public inline fun <reified T> BinaryFormat.decodeFromByteArray(bytes: ByteArray)
         decodeFromByteArray(serializersModule.serializer(), bytes)
 
 @InternalCircularSerializationApi
-public fun <T : Any> AbstractPolymorphicCircularSerializer<T>.findPolymorphicSerializer(decoder: CompositeDecoder,
-        klassName: String?): CircularDeserializationStrategy<T> =
+public fun <T : Any> AbstractPolymorphicCircularSerializer<T>.findPolymorphicSerializer(
+        decoder: CircularCompositeDecoder, klassName: String?): CircularDeserializationStrategy<T> =
         findPolymorphicSerializerOrNull(decoder, klassName) ?: throwSubtypeNotRegistered(klassName, baseClass)
 
 @InternalCircularSerializationApi
-public fun <T : Any> AbstractPolymorphicCircularSerializer<T>.findPolymorphicSerializer(encoder: Encoder,
+public fun <T : Any> AbstractPolymorphicCircularSerializer<T>.findPolymorphicSerializer(encoder: CircularEncoder,
         value: T): CircularSerializationStrategy<T> =
         findPolymorphicSerializerOrNull(encoder, value) ?: throwSubtypeNotRegistered(value::class, baseClass)
 
@@ -220,7 +223,7 @@ public fun serializerOrNull(type: KType): CircularKSerializer<Any?>? =
  */
 public fun CircularSerializersModule.serializer(type: KType): CircularKSerializer<Any?> =
         serializerByKTypeImpl(type, failOnMissingTypeArgSerializer = true) ?: type.kclass()
-            .platformSpecificSerializerNotRegistered()
+                .platformSpecificSerializerNotRegistered()
 
 /**
  * Retrieves serializer for the given [kClass] and,
@@ -298,7 +301,7 @@ private fun CircularSerializersModule.serializerByKTypeImpl(type: KType,
     return contextualSerializer?.cast<Any>()?.nullable(isNullable)
 }
 
-@OptIn(ExperimentalCircularSerializationApi::class)
+@OptIn(ExperimentalCircularSerializationApi::class, InternalCircularSerializationApi::class)
 private fun CircularSerializersModule.serializerByKClassImpl(rootClass: KClass<Any>,
         typeArgumentsSerializers: List<CircularKSerializer<Any?>>, isNullable: Boolean): CircularKSerializer<Any?>? {
     val serializer = if (typeArgumentsSerializers.isEmpty()) {
@@ -388,19 +391,22 @@ internal fun KClass<Any>.parametrizedSerializerOrNull(serializers: List<Circular
             serializers)
 }
 
-private fun KClass<Any>.compiledParametrizedSerializer(serializers: List<CircularKSerializer<Any?>>): CircularKSerializer<out Any>? {
+private fun KClass<Any>.compiledParametrizedSerializer(
+        serializers: List<CircularKSerializer<Any?>>): CircularKSerializer<out Any>? {
     return constructSerializerForGivenTypeArgs(*serializers.toTypedArray())
 }
 
-@OptIn(ExperimentalCircularSerializationApi::class)
+@OptIn(ExperimentalCircularSerializationApi::class, InternalCircularSerializationApi::class)
 private fun KClass<Any>.builtinParametrizedSerializer(serializers: List<CircularKSerializer<Any?>>,
         elementClassifierIfArray: () -> KClassifier?): CircularKSerializer<out Any>? {
     return when (this) {
-        Collection::class, List::class, MutableList::class, ArrayList::class -> CircularArrayListSerializer(serializers[0])
+        Collection::class, List::class, MutableList::class, ArrayList::class -> CircularArrayListSerializer(
+                serializers[0])
         HashSet::class -> CircularHashSetSerializer(serializers[0])
         Set::class, MutableSet::class, LinkedHashSet::class -> CircularLinkedHashSetSerializer(serializers[0])
         HashMap::class -> CircularHashMapSerializer(serializers[0], serializers[1])
-        Map::class, MutableMap::class, LinkedHashMap::class -> CircularLinkedHashMapSerializer(serializers[0], serializers[1])
+        Map::class, MutableMap::class, LinkedHashMap::class -> CircularLinkedHashMapSerializer(serializers[0],
+                serializers[1])
 
         Map.Entry::class -> CircularMapEntrySerializer(serializers[0], serializers[1])
         Pair::class -> CircularPairSerializer(serializers[0], serializers[1])

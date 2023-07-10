@@ -1,8 +1,12 @@
 package org.cirjson.serialization
 
+import org.cirjson.serialization.descriptors.*
+import org.cirjson.serialization.encoding.CircularEncoder
+import org.cirjson.serialization.encoding.CircularDecoder
+
 /**
  * KSerializer is responsible for the representation of a serial form of a type [T]
- * in terms of [encoders][Encoder] and [decoders][Decoder] and for constructing and deconstructing [T]
+ * in terms of [encoders][CircularEncoder] and [decoders][CircularDecoder] and for constructing and deconstructing [T]
  * from/to a sequence of encoding primitives. For classes marked with [@Serializable][CircularSerializable], can be
  * obtained from generated companion extension `.serializer()` or from [serializer<T>()][serializer] function.
  *
@@ -23,9 +27,9 @@ package org.cirjson.serialization
  *
  * Structural description specifies how the [T] is represented in the serial form:
  * its [kind][SerialKind] (e.g. whether it is represented as a primitive, a list or a class),
- * its [elements][SerialDescriptor.elementNames] and their [positional names][SerialDescriptor.getElementName].
+ * its [elements][CircularSerialDescriptor.elementNames] and their [positional names][CircularSerialDescriptor.getElementName].
  *
- * Serialization process is defined as a sequence of calls to an [Encoder], and transforms a type [T]
+ * Serialization process is defined as a sequence of calls to an [CircularEncoder], and transforms a type [T]
  * into a stream of format-agnostic primitives that represent [T], such as "here is an int, here is a double
  * and here is another nested object". It can be demonstrated by the example:
  * ```
@@ -42,7 +46,7 @@ package org.cirjson.serialization
  * } // end of the structure
  * ```
  *
- * Deserialization process is symmetric and uses [Decoder].
+ * Deserialization process is symmetric and uses [CircularDecoder].
  *
  * ### Exception types for `KSerializer` implementation
  *
@@ -50,7 +54,7 @@ package org.cirjson.serialization
  * any subtype of [IllegalArgumentException] in order to indicate serialization
  * and deserialization errors.
  *
- * For serializer implementations, it is recommended to throw subclasses of [SerializationException] for
+ * For serializer implementations, it is recommended to throw subclasses of [CircularSerializationException] for
  * any serialization-specific errors related to invalid or unsupported format of the data
  * and [IllegalStateException] for errors during validation of the data.
  */
@@ -66,6 +70,6 @@ public interface CircularKSerializer<T> : CircularSerializationStrategy<T>, Circ
      * to introspect the type and metadata of [T]'s elements being encoded or decoded, and
      * to introspect the type, infer the schema or to compare against the predefined schema.
      */
-    override val descriptor: SerialDescriptor
+    override val descriptor: CircularSerialDescriptor
 
 }

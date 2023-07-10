@@ -3,6 +3,7 @@ package org.cirjson.serialization.descriptors
 import org.cirjson.serialization.ExperimentalCircularSerializationApi
 import org.cirjson.serialization.modules.CircularSerializersModule
 import org.cirjson.serialization.PolymorphicCircularSerializer
+import org.cirjson.serialization.internal.CircularSerialDescriptorForNullable
 import kotlin.reflect.KClass
 
 /**
