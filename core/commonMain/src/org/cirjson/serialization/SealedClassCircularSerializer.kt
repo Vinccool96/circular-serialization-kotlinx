@@ -1,6 +1,16 @@
 package org.cirjson.serialization
 
+import org.cirjson.serialization.builtins.serializer
+import org.cirjson.serialization.descriptors.CircularSerialDescriptor
+import org.cirjson.serialization.descriptors.PolymorphicKind
+import org.cirjson.serialization.descriptors.SerialKind
+import org.cirjson.serialization.descriptors.buildSerialDescriptor
+import org.cirjson.serialization.encoding.CircularCompositeDecoder
+import org.cirjson.serialization.encoding.CircularEncoder
 import org.cirjson.serialization.internal.AbstractPolymorphicCircularSerializer
+import org.cirjson.serialization.internal.CircularObjectSerializer
+import org.cirjson.serialization.internal.cast
+import org.cirjson.serialization.modules.CircularSerializersModule
 import kotlin.reflect.KClass
 
 /**
@@ -74,7 +84,7 @@ public class SealedClassCircularSerializer<T : Any>(serialName: String, override
      * This constructor can (and should) became primary when Require-Kotlin-Version is raised to at least 1.5.30
      * to remove necessity to store annotations separately and calculate descriptor via `lazy {}`.
      *
-     * When doing this change, also migrate secondary constructors from [PolymorphicCircularSerializer] and [ObjectSerializer].
+     * When doing this change, also migrate secondary constructors from [PolymorphicCircularSerializer] and [CircularObjectSerializer].
      */
     @PublishedApi
     internal constructor(serialName: String, baseClass: KClass<T>, subclasses: Array<KClass<out T>>,
@@ -121,12 +131,12 @@ public class SealedClassCircularSerializer<T : Any>(serialName: String, override
             }.mapValues { it.value.value }
     }
 
-    override fun findPolymorphicSerializerOrNull(decoder: CompositeDecoder,
+    override fun findPolymorphicSerializerOrNull(decoder: CircularCompositeDecoder,
             klassName: String?): CircularDeserializationStrategy<T>? {
         return serialName2Serializer[klassName] ?: super.findPolymorphicSerializerOrNull(decoder, klassName)
     }
 
-    override fun findPolymorphicSerializerOrNull(encoder: Encoder, value: T): CircularSerializationStrategy<T>? {
+    override fun findPolymorphicSerializerOrNull(encoder: CircularEncoder, value: T): CircularSerializationStrategy<T>? {
         return (class2Serializer[value::class] ?: super.findPolymorphicSerializerOrNull(encoder, value))?.cast()
     }
 }

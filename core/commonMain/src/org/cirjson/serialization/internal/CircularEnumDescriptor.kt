@@ -10,7 +10,7 @@ import org.cirjson.serialization.descriptors.*
  */
 @Suppress("unused") // Used by the plugin
 @PublishedApi
-@OptIn(ExperimentalCircularSerializationApi::class)
+@OptIn(ExperimentalCircularSerializationApi::class, InternalCircularSerializationApi::class)
 internal class CircularEnumDescriptor(name: String, elementsCount: Int) :
     PluginGeneratedSerialDescriptor(name, elementsCount = elementsCount) {
 

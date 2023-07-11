@@ -2,7 +2,11 @@ package org.cirjson.serialization.descriptors
 
 import org.cirjson.serialization.ExperimentalCircularSerializationApi
 import org.cirjson.serialization.encoding.CircularCompositeDecoder
+import org.cirjson.serialization.internal.*
 import org.cirjson.serialization.internal.CircularCachedNames
+import org.cirjson.serialization.internal.compactArray
+import org.cirjson.serialization.internal.getChecked
+import org.cirjson.serialization.internal.hashCodeImpl
 
 @OptIn(ExperimentalCircularSerializationApi::class)
 internal class CircularSerialDescriptorImpl(override val serialName: String, override val kind: SerialKind,
@@ -21,7 +25,7 @@ internal class CircularSerialDescriptorImpl(override val serialName: String, ove
 
     private val elementOptionality: BooleanArray = builder.elementOptionality.toBooleanArray()
 
-    private val name2Index: Map<String, Int> = elementNames.withIndex().map { it.value to it.index }.toMap()
+    private val name2Index: Map<String, Int> = elementNames.withIndex().associate { it.value to it.index }
 
     private val typeParametersDescriptors: Array<CircularSerialDescriptor> = typeParameters.compactArray()
 

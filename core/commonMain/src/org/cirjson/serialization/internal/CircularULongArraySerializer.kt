@@ -17,7 +17,7 @@ import org.cirjson.serialization.encoding.CircularEncoder
  * unless format's Encoder/Decoder have special handling for this serializer.
  */
 @PublishedApi
-@OptIn(InternalCircularSerializationApi::class)
+@OptIn(InternalCircularSerializationApi::class, ExperimentalUnsignedTypes::class)
 internal object CircularULongArraySerializer : CircularKSerializer<ULongArray>,
     CircularPrimitiveArraySerializer<ULong, ULongArray, CircularULongArrayBuilder>(ULong.serializer()) {
 

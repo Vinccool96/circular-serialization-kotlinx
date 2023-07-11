@@ -264,3 +264,7 @@ private fun checkName(serialName: String) {
 }
 
 private fun String.capitalize() = replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T : Any> KClass<T>.builtinSerializerOrNull(): CircularKSerializer<T>? =
+        BUILTIN_SERIALIZERS[this] as CircularKSerializer<T>?

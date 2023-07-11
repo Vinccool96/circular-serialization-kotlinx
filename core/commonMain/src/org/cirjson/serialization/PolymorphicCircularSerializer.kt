@@ -1,5 +1,7 @@
 package org.cirjson.serialization
 
+import org.cirjson.serialization.builtins.serializer
+import org.cirjson.serialization.descriptors.*
 import org.cirjson.serialization.internal.AbstractPolymorphicCircularSerializer
 import org.cirjson.serialization.modules.CircularSerializersModule
 import org.cirjson.serialization.modules.CircularSerializersModuleBuilder
@@ -59,7 +61,7 @@ import kotlin.reflect.KClass
  * @see CircularSerializersModule
  * @see CircularSerializersModuleBuilder.polymorphic
  */
-@OptIn(InternalCircularSerializationApi::class)
+@OptIn(InternalCircularSerializationApi::class, ExperimentalCircularSerializationApi::class)
 public class PolymorphicCircularSerializer<T : Any>(override val baseClass: KClass<T>) :
         AbstractPolymorphicCircularSerializer<T>() {
 
@@ -70,7 +72,7 @@ public class PolymorphicCircularSerializer<T : Any>(override val baseClass: KCla
 
     private var _annotations: List<Annotation> = emptyList()
 
-    public override val descriptor: SerialDescriptor by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    public override val descriptor: CircularSerialDescriptor by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildSerialDescriptor("org.cirjson.serialization.Polymorphic", PolymorphicKind.OPEN) {
             element("type", String.serializer().descriptor)
             element("value", buildSerialDescriptor("org.cirjson.serialization.Polymorphic<${baseClass.simpleName}>",
@@ -79,7 +81,6 @@ public class PolymorphicCircularSerializer<T : Any>(override val baseClass: KCla
         }.withContext(baseClass)
     }
 
-    @OptIn(InternalCircularSerializationApi::class)
     override fun toString(): String {
         return "org.cirjson.serialization.PolymorphicCircularSerializer(baseClass: $baseClass)"
     }

@@ -1,11 +1,15 @@
 package org.cirjson.serialization
 
+import org.cirjson.serialization.descriptors.CircularSerialDescriptor
+import org.cirjson.serialization.encoding.CircularDecoder
+import org.cirjson.serialization.encoding.CircularCompositeDecoder
+
 /**
  * Deserialization strategy defines the serial form of a type [T], including its structural description,
  * declared by the [descriptor] and the actual deserialization process, defined by the implementation
  * of the [deserialize] method.
  *
- * [deserialize] method takes an instance of [Decoder], and, knowing the serial form of the [T],
+ * [deserialize] method takes an instance of [CircularDecoder], and, knowing the serial form of the [T],
  * invokes primitive retrieval methods on the decoder and then transforms the received primitives
  * to an instance of [T].
  *
@@ -22,18 +26,18 @@ public interface CircularDeserializationStrategy<out T> {
      * Describes the structure of the serializable representation of [T], that current
      * deserializer is able to deserialize.
      */
-    public val descriptor: SerialDescriptor
+    public val descriptor: CircularSerialDescriptor
 
     /**
      * Deserializes the value of type [T] using the format that is represented by the given [decoder].
-     * [deserialize] method is format-agnostic and operates with a high-level structured [Decoder] API.
+     * [deserialize] method is format-agnostic and operates with a high-level structured [CircularDecoder] API.
      * As long as most of the formats imply an arbitrary order of properties, deserializer should be able
      * to decode these properties in an arbitrary order and in a format-agnostic way.
-     * For that purposes, [CompositeDecoder.decodeElementIndex]-based loop is used: decoder firstly
+     * For that purposes, [CircularCompositeDecoder.decodeElementIndex]-based loop is used: decoder firstly
      * signals property at which index it is ready to decode and then expects caller to decode
      * property with the given index.
      *
-     * Throws [SerializationException] if value cannot be deserialized.
+     * Throws [CircularSerializationException] if value cannot be deserialized.
      *
      * Example of deserialize method:
      * ```
@@ -64,10 +68,10 @@ public interface CircularDeserializationStrategy<out T> {
      * ```
      *
      * @throws MissingFieldException if non-optional fields were not found during deserialization
-     * @throws SerializationException in case of any deserialization-specific error
+     * @throws CircularSerializationException in case of any deserialization-specific error
      * @throws IllegalArgumentException if the decoded input is not a valid instance of [T]
      * @see CircularKSerializer for additional information about general contracts and exception specifics
      */
-    public fun deserialize(decoder: Decoder): T
+    public fun deserialize(decoder: CircularDecoder): T
 
 }

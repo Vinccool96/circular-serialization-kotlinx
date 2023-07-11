@@ -4,6 +4,7 @@ import org.cirjson.serialization.CircularDeserializationStrategy
 import org.cirjson.serialization.CircularKSerializer
 import org.cirjson.serialization.CircularSerializationStrategy
 import org.cirjson.serialization.ExperimentalCircularSerializationApi
+import org.cirjson.serialization.internal.cast
 import kotlin.jvm.JvmField
 import kotlin.reflect.KClass
 import kotlin.reflect.cast

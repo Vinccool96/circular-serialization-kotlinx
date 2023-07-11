@@ -19,8 +19,7 @@ internal actual fun <T : Any> KClass<T>.constructSerializerForGivenTypeArgs(
         vararg args: CircularKSerializer<Any?>): CircularKSerializer<T>? =
         when (val assocObject = findAssociatedObject<SerializableWith>()) {
             is CircularKSerializer<*> -> assocObject as CircularKSerializer<T>
-            is org.cirjson.serialization.internal.CircularSerializerFactory -> assocObject.serializer(
-                    *args) as CircularKSerializer<T>
+            is CircularSerializerFactory -> assocObject.serializer(*args) as CircularKSerializer<T>
             else -> null
         }
 

@@ -3,6 +3,7 @@ package org.cirjson.serialization.modules
 import org.cirjson.serialization.CircularDeserializationStrategy
 import org.cirjson.serialization.CircularKSerializer
 import org.cirjson.serialization.CircularSerializationStrategy
+import org.cirjson.serialization.internal.cast
 import kotlin.reflect.KClass
 
 /**

@@ -14,6 +14,18 @@ public inline fun <T> CircularDecoder.decodeStructure(descriptor: CircularSerial
 }
 
 /**
+ * Begins a structure, encodes it using the given [block] and ends it.
+ */
+public inline fun CircularEncoder.encodeStructure(
+        descriptor: CircularSerialDescriptor,
+        crossinline block: CircularCompositeEncoder.() -> Unit
+) {
+    val composite = beginStructure(descriptor)
+    composite.block()
+    composite.endStructure(descriptor)
+}
+
+/**
  * Begins a collection, encodes it using the given [block] and ends it.
  */
 public inline fun CircularEncoder.encodeCollection(descriptor: CircularSerialDescriptor, collectionSize: Int,

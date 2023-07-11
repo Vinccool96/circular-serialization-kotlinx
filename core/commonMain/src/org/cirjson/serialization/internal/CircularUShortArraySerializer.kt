@@ -1,10 +1,10 @@
 package org.cirjson.serialization.internal
 
 import org.cirjson.serialization.CircularKSerializer
-import org.cirjson.serialization.descriptors.CircularSerialDescriptor
-import org.cirjson.serialization.descriptors.PrimitiveKind
-import org.cirjson.serialization.encoding.CircularDecoder
-import org.cirjson.serialization.encoding.CircularEncoder
+import org.cirjson.serialization.InternalCircularSerializationApi
+import org.cirjson.serialization.builtins.serializer
+import org.cirjson.serialization.encoding.CircularCompositeDecoder
+import org.cirjson.serialization.encoding.CircularCompositeEncoder
 
 /**
  * Serializer for [ShortArray].
@@ -13,7 +13,7 @@ import org.cirjson.serialization.encoding.CircularEncoder
  * unless format's Encoder/Decoder have special handling for this serializer.
  */
 @PublishedApi
-@OptIn(InternalCircularSerializationApi::class)
+@OptIn(InternalCircularSerializationApi::class, ExperimentalUnsignedTypes::class)
 internal object CircularUShortArraySerializer : CircularKSerializer<UShortArray>,
     CircularPrimitiveArraySerializer<UShort, UShortArray, CircularUShortArrayBuilder>(UShort.serializer()) {
 

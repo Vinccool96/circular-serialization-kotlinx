@@ -1,6 +1,7 @@
 package org.cirjson.serialization.internal
 
 import org.cirjson.serialization.*
+import org.cirjson.serialization.encoding.*
 import kotlin.reflect.KClass
 
 /**
@@ -22,7 +23,7 @@ public abstract class AbstractPolymorphicCircularSerializer<T : Any> internal co
      */
     public abstract val baseClass: KClass<T>
 
-    public final override fun serialize(encoder: Encoder, value: T) {
+    public final override fun serialize(encoder: CircularEncoder, value: T) {
         val actualSerializer = findPolymorphicSerializer(encoder, value)
         encoder.encodeStructure(descriptor) {
             encodeStringElement(descriptor, 0, actualSerializer.descriptor.serialName)
@@ -30,7 +31,8 @@ public abstract class AbstractPolymorphicCircularSerializer<T : Any> internal co
         }
     }
 
-    public final override fun deserialize(decoder: Decoder): T = decoder.decodeStructure(descriptor) {
+    @Suppress("UNCHECKED_CAST")
+    public final override fun deserialize(decoder: CircularDecoder): T = decoder.decodeStructure(descriptor) {
         var klassName: String? = null
         var value: Any? = null
         if (decodeSequentially()) {
@@ -39,7 +41,7 @@ public abstract class AbstractPolymorphicCircularSerializer<T : Any> internal co
 
         mainLoop@ while (true) {
             when (val index = decodeElementIndex(descriptor)) {
-                CompositeDecoder.DECODE_DONE -> {
+                CircularCompositeDecoder.DECODE_DONE -> {
                     break@mainLoop
                 }
                 0 -> {
@@ -55,11 +57,10 @@ public abstract class AbstractPolymorphicCircularSerializer<T : Any> internal co
                                 ?: "unknown class") + "\n Expected 0, 1 or DECODE_DONE(-1), but found $index")
             }
         }
-        @Suppress("UNCHECKED_CAST") requireNotNull(
-                value) { "Polymorphic value has not been read for class $klassName" } as T
+        requireNotNull(value) { "Polymorphic value has not been read for class $klassName" } as T
     }
 
-    private fun decodeSequentially(compositeDecoder: CompositeDecoder): T {
+    private fun decodeSequentially(compositeDecoder: CircularCompositeDecoder): T {
         val klassName = compositeDecoder.decodeStringElement(descriptor, 0)
         val serializer = findPolymorphicSerializer(compositeDecoder, klassName)
         return compositeDecoder.decodeSerializableElement(descriptor, 1, serializer)
@@ -70,7 +71,7 @@ public abstract class AbstractPolymorphicCircularSerializer<T : Any> internal co
      * May use context from the [decoder].
      */
     @InternalCircularSerializationApi
-    public open fun findPolymorphicSerializerOrNull(decoder: CompositeDecoder,
+    public open fun findPolymorphicSerializerOrNull(decoder: CircularCompositeDecoder,
             klassName: String?): CircularDeserializationStrategy<T>? =
             decoder.serializersModule.getPolymorphic(baseClass, klassName)
 
@@ -79,7 +80,7 @@ public abstract class AbstractPolymorphicCircularSerializer<T : Any> internal co
      * May use context from the [encoder].
      */
     @InternalCircularSerializationApi
-    public open fun findPolymorphicSerializerOrNull(encoder: Encoder, value: T): CircularSerializationStrategy<T>? =
-            encoder.serializersModule.getPolymorphic(baseClass, value)
+    public open fun findPolymorphicSerializerOrNull(encoder: CircularEncoder,
+            value: T): CircularSerializationStrategy<T>? = encoder.serializersModule.getPolymorphic(baseClass, value)
 
 }

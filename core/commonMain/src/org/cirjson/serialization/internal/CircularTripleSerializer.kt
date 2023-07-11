@@ -2,6 +2,7 @@ package org.cirjson.serialization.internal
 
 import org.cirjson.serialization.CircularKSerializer
 import org.cirjson.serialization.CircularSerializationException
+import org.cirjson.serialization.ExperimentalCircularSerializationApi
 import org.cirjson.serialization.descriptors.CircularSerialDescriptor
 import org.cirjson.serialization.descriptors.buildCircularClassSerialDescriptor
 import org.cirjson.serialization.encoding.CircularCompositeDecoder
@@ -9,6 +10,7 @@ import org.cirjson.serialization.encoding.CircularDecoder
 import org.cirjson.serialization.encoding.CircularEncoder
 
 @PublishedApi
+@OptIn(ExperimentalCircularSerializationApi::class)
 internal class CircularTripleSerializer<A, B, C>(private val aSerializer: CircularKSerializer<A>,
         private val bSerializer: CircularKSerializer<B>, private val cSerializer: CircularKSerializer<C>) :
     CircularKSerializer<Triple<A, B, C>> {

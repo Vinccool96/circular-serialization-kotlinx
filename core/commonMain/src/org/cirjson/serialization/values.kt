@@ -1,5 +1,9 @@
 package org.cirjson.serialization
 
+import org.cirjson.serialization.builtins.nullable
+import org.cirjson.serialization.internal.cast
+import org.cirjson.serialization.internal.createCache
+import org.cirjson.serialization.internal.createParametrizedCache
 import org.cirjson.serialization.modules.EmptyCircularSerializersModule
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KClass
@@ -9,12 +13,14 @@ import kotlin.reflect.KType
  * Cache for non-null non-parametrized and non-contextual serializers.
  */
 @ThreadLocal
+@OptIn(InternalCircularSerializationApi::class)
 private val SERIALIZERS_CACHE = createCache { it.serializerOrNull() }
 
 /**
  * Cache for nullable non-parametrized and non-contextual serializers.
  */
 @ThreadLocal
+@OptIn(InternalCircularSerializationApi::class)
 private val SERIALIZERS_CACHE_NULLABLE = createCache<Any?> { it.serializerOrNull()?.nullable?.cast() }
 
 /**

@@ -19,15 +19,15 @@ buildscript {
     }
     ext.experimentalsEnabled = ["-progressive",
                                 "-opt-in=kotlin.ExperimentalMultiplatform",
-                                "-opt-in=kotlinx.serialization.InternalSerializationApi",
-                                "-P", "plugin:org.jetbrains.kotlinx.serialization:disableIntrinsic=false"
+                                "-opt-in=org.cirjson.serialization.InternalCircularSerializationApi",
+                                "-P", "plugin:org.cirjson.serialization:disableIntrinsic=false"
     ]
 
     ext.experimentalsInTestEnabled = ["-progressive",
                                       "-opt-in=kotlin.ExperimentalMultiplatform",
-                                      "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
-                                      "-opt-in=kotlinx.serialization.InternalSerializationApi",
-                                      "-P", "plugin:org.jetbrains.kotlinx.serialization:disableIntrinsic=false"
+                                      "-opt-in=org.cirjson.serialization.ExperimentalCircularSerializationApi",
+                                      "-opt-in=org.cirjson.serialization.InternalCircularSerializationApi",
+                                      "-P", "plugin:org.cirjson.serialization:disableIntrinsic=false"
     ]
     ext.koverEnabled = property('kover.enabled') ?: true
 

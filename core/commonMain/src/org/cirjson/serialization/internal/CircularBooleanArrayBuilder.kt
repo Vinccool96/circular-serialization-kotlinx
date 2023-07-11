@@ -1,11 +1,5 @@
 package org.cirjson.serialization.internal
 
-import org.cirjson.serialization.CircularKSerializer
-import org.cirjson.serialization.descriptors.CircularSerialDescriptor
-import org.cirjson.serialization.descriptors.PrimitiveKind
-import org.cirjson.serialization.encoding.CircularDecoder
-import org.cirjson.serialization.encoding.CircularEncoder
-
 @PublishedApi
 internal class CircularBooleanArrayBuilder internal constructor(bufferWithData: BooleanArray) :
     CircularPrimitiveArrayBuilder<BooleanArray>() {
@@ -23,7 +17,7 @@ internal class CircularBooleanArrayBuilder internal constructor(bufferWithData: 
         if (buffer.size < requiredCapacity) buffer = buffer.copyOf(requiredCapacity.coerceAtLeast(buffer.size * 2))
     }
 
-    internal fun append(c: Byte) {
+    internal fun append(c: Boolean) {
         ensureCapacity()
         buffer[position++] = c
     }

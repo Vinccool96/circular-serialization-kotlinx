@@ -1,11 +1,5 @@
 package org.cirjson.serialization.internal
 
-import org.cirjson.serialization.CircularKSerializer
-import org.cirjson.serialization.descriptors.CircularSerialDescriptor
-import org.cirjson.serialization.descriptors.PrimitiveKind
-import org.cirjson.serialization.encoding.CircularDecoder
-import org.cirjson.serialization.encoding.CircularEncoder
-
 @PublishedApi
 internal class CircularFloatArrayBuilder internal constructor(bufferWithData: FloatArray) :
     CircularPrimitiveArrayBuilder<FloatArray>() {
@@ -23,7 +17,7 @@ internal class CircularFloatArrayBuilder internal constructor(bufferWithData: Fl
         if (buffer.size < requiredCapacity) buffer = buffer.copyOf(requiredCapacity.coerceAtLeast(buffer.size * 2))
     }
 
-    internal fun append(c: Byte) {
+    internal fun append(c: Float) {
         ensureCapacity()
         buffer[position++] = c
     }

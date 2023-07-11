@@ -37,7 +37,7 @@ kotlin {
 
             optIn("kotlin.ExperimentalMultiplatform")
             optIn("kotlin.ExperimentalStdlibApi")
-            optIn("kotlinx.serialization.InternalSerializationApi")
+            optIn("org.cirjson.serialization.InternalCircularSerializationApi")
         }
     }
 

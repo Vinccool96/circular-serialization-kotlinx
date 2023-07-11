@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package org.cirjson.serialization
 
 import org.cirjson.serialization.builtins.CircularArraySerializer

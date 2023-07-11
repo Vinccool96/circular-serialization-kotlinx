@@ -1,6 +1,7 @@
 package org.cirjson.serialization.internal
 
 import org.cirjson.serialization.CircularKSerializer
+import org.cirjson.serialization.ExperimentalCircularSerializationApi
 import org.cirjson.serialization.InternalCircularSerializationApi
 import org.cirjson.serialization.descriptors.CircularSerialDescriptor
 import org.cirjson.serialization.descriptors.PrimitiveKind
@@ -9,6 +10,7 @@ import org.cirjson.serialization.encoding.CircularEncoder
 import org.cirjson.serialization.encoding.encodeCollection
 
 @InternalCircularSerializationApi // TODO tech debt: it's used in ProtoBuf
+@OptIn(ExperimentalCircularSerializationApi::class)
 public sealed class CircularMapLikeSerializer<Key, Value, Collection, Builder : MutableMap<Key, Value>>(
         public val keySerializer: CircularKSerializer<Key>, public val valueSerializer: CircularKSerializer<Value>) :
     AbstractCircularCollectionSerializer<Map.Entry<Key, Value>, Collection, Builder>() {
