@@ -1,12 +1,12 @@
 package org.cirjson.serialization
 
 /**
- * Instructs the plugin to use [ContextualSerializer] on a given property or type.
+ * Instructs the plugin to use [ContextualCircularSerializer] on a given property or type.
  * Context serializer is usually used when serializer for type can only be found in runtime.
- * It is also possible to apply [ContextualSerializer] to every property of the given type,
+ * It is also possible to apply [ContextualCircularSerializer] to every property of the given type,
  * using file-level [UseContextualCircularSerialization] annotation.
  *
- * @see ContextualSerializer
+ * @see ContextualCircularSerializer
  * @see UseContextualCircularSerialization
  */
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.TYPE)

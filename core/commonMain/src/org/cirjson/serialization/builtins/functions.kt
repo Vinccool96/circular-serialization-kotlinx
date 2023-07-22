@@ -198,14 +198,14 @@ public fun <T> CircularListSerializer(elementSerializer: CircularKSerializer<T>)
 /**
  * Creates a serializer for [`Set<T>`][Set] for the given serializer of type [T].
  */
-public fun <T> SetSerializer(elementSerializer: CircularKSerializer<T>): CircularKSerializer<Set<T>> =
+public fun <T> CircularSetSerializer(elementSerializer: CircularKSerializer<T>): CircularKSerializer<Set<T>> =
         CircularLinkedHashSetSerializer(elementSerializer)
 
 /**
  * Creates a serializer for [`Map<K, V>`][Map] for the given serializers for
  * its ket type [K] and value type [V].
  */
-public fun <K, V> MapSerializer(keySerializer: CircularKSerializer<K>,
+public fun <K, V> CircularMapSerializer(keySerializer: CircularKSerializer<K>,
         valueSerializer: CircularKSerializer<V>): CircularKSerializer<Map<K, V>> =
         CircularLinkedHashMapSerializer(keySerializer, valueSerializer)
 

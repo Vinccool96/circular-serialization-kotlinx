@@ -1,13 +1,14 @@
 package org.cirjson.serialization.internal
 
-import org.cirjson.serialization.CircularKSerializer
-import org.cirjson.serialization.CircularSerializable
-import org.cirjson.serialization.Polymorphic
-import org.cirjson.serialization.PolymorphicCircularSerializer
+import org.cirjson.serialization.*
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
+
+internal fun Class<*>.serializerNotRegistered(): Nothing {
+    throw CircularSerializationException(this.kotlin.notRegisteredMessage())
+}
 
 internal actual fun KClass<*>.platformSpecificSerializerNotRegistered(): Nothing = serializerNotRegistered()
 
