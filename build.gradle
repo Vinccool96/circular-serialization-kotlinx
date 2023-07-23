@@ -173,11 +173,7 @@ def uncoveredProjects = ["kotlinx-serialization-bom", "benchmark", "guide"] as S
 subprojects {
 
     tasks.withType(AbstractKotlinCompile).all { task ->
-        print("TASK: ")
-        println(task.name)
         if (task.name.contains("Test") || task.name.contains("Jmh")) {
-            print("TEST TASK: ")
-            println(task.name)
             task.kotlinOptions.freeCompilerArgs += experimentalsInTestEnabled
         } else {
             task.kotlinOptions.freeCompilerArgs += experimentalsEnabled
@@ -188,6 +184,10 @@ subprojects {
     // Configure publishing for some artifacts
     if (!unpublishedProjects.contains(project.name)) {
         apply from: rootProject.file('gradle/publishing.gradle')
+    }
+
+    tasks.withType(JavaCompile).all {
+        println(options.compilerArgs)
     }
 }
 

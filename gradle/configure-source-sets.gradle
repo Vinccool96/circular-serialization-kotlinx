@@ -45,7 +45,6 @@ kotlin {
         commonMain {
             dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                implementation "org.jetbrains.kotlin:kotlin-compiler:1.9.0"
             }
         }
 
