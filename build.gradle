@@ -57,19 +57,22 @@ buildscript {
         // For Dokka that depends on kotlinx-html
         maven { url "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven" }
         mavenLocal()
+        maven { url = uri("../local-plugin-repository") }
     }
 
     configurations.classpath {
         resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//            println("details.requested: ${details.requested}")
             if (details.requested.group == 'org.jetbrains.kotlin') {
-                details.useVersion kotlin_version
+//                println("details.requested: ${details.requested}")
+//                details.useVersion kotlin_version
             }
         }
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+        classpath "org.cirjson.gradle.plugin:cirjson-plugin:$cirjson_plugin_version"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
         classpath "org.jetbrains.kotlinx:kover:$kover_version"
         classpath "org.jetbrains.kotlinx:binary-compatibility-validator:$validator_version"
@@ -96,7 +99,7 @@ apiValidation {
     ignoredProjects += [
 //            "benchmark",
 //            "guide",
-            "circular-serialization-kotlinx",
+"circular-serialization-kotlinx",
     ]
 }
 
@@ -155,11 +158,7 @@ allprojects {
     }
 
     tasks.withType(AbstractKotlinCompile).all { task ->
-        print("TASK: ")
-        println(task.name)
         if (task.name.contains("Test") || task.name.contains("Jmh")) {
-            print("TEST TASK: ")
-            println(task.name)
             task.kotlinOptions.freeCompilerArgs += experimentalsInTestEnabled
         } else {
             task.kotlinOptions.freeCompilerArgs += experimentalsEnabled
@@ -172,6 +171,7 @@ def excludedFromBomProjects = unpublishedProjects + "kotlinx-serialization-bom" 
 def uncoveredProjects = ["kotlinx-serialization-bom", "benchmark", "guide"] as Set
 
 subprojects {
+
     tasks.withType(AbstractKotlinCompile).all { task ->
         print("TASK: ")
         println(task.name)

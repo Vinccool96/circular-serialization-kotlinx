@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
  */
 
 apply plugin: 'kotlin-multiplatform'
-apply plugin: 'kotlinx-serialization'
+apply plugin: 'org.cirjson.plugin.serialization'
 
 apply from: rootProject.file("gradle/native-targets.gradle")
 apply from: rootProject.file("gradle/configure-source-sets.gradle")

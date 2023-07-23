@@ -45,6 +45,7 @@ kotlin {
         commonMain {
             dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                implementation "org.jetbrains.kotlin:kotlin-compiler:1.9.0"
             }
         }
 
@@ -85,8 +86,8 @@ kotlin {
 
     sourceSets.findAll({ it.name.contains("Test") }).forEach { srcSet ->
         srcSet.languageSettings {
-            it.optIn("kotlinx.serialization.InternalSerializationApi")
-            it.optIn("kotlinx.serialization.ExperimentalSerializationApi")
+            it.optIn("org.cirjson.serialization.InternalSerializationApi")
+            it.optIn("org.cirjson.serialization.ExperimentalSerializationApi")
         }
     }
 
