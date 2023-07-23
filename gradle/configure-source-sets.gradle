@@ -86,8 +86,8 @@ kotlin {
 
     sourceSets.findAll({ it.name.contains("Test") }).forEach { srcSet ->
         srcSet.languageSettings {
-            it.optIn("org.cirjson.serialization.InternalSerializationApi")
-            it.optIn("org.cirjson.serialization.ExperimentalSerializationApi")
+            it.optIn("org.cirjson.serialization.InternalCircularSerializationApi")
+            it.optIn("org.cirjson.serialization.ExperimentalCircularSerializationApi")
         }
     }
 
